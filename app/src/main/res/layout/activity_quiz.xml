@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:gravity="center"
-            android:paddingBottom="140dp"
+            android:paddingBottom="120dp"
             android:textColor="#363A43"
             android:textSize="26sp"
             android:text="What is the capital of Saint Vincent and The Grenadines"></TextView>
@@ -106,6 +106,20 @@
             android:gravity="center"
             android:textSize="18sp"
             android:text="Option 4"
+            >
+
+        </Button>
+
+        <Button
+            android:id="@+id/bt_continue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="Continue"
+            android:visibility="invisible"
             >
 
         </Button>
