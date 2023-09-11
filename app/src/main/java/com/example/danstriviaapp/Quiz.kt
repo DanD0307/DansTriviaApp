@@ -9,12 +9,12 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_quiz.*
 
-
 class Quiz : AppCompatActivity() {
     var index = 0
     var correctOption = 0
     var questionOverFlag = false
     var endOfQuizFlag = false
+    var hundredPercentFlag = false
     var questionList = arrayListOf<Question>()
     var incorrectQuestionList = arrayListOf<Question>()
 
@@ -30,25 +30,34 @@ class Quiz : AppCompatActivity() {
         startQuiz(quizName)
 
         //Button Listeners
+
+        //First Button
         bt_option_one.setOnClickListener{
             if(endOfQuizFlag){
                 //User has requested to restart the quiz in full.
-                resetOptionButtons()
-                index = 0
-                incorrectQuestionList = arrayListOf<Question>()
+                nextQuizPrep()
                 startQuiz(quizName)
 
             }
             else //User has selected answer option one
                 clickedOption(0,bt_option_one)
         }
+
+        //Second Button
         bt_option_two.setOnClickListener{
             if(endOfQuizFlag) {
-                //TODO Allow the user to restart the quiz with incorrect questions only
+                if(hundredPercentFlag) //If the user got 100 percent this button just says Exit so we exit the program
+                    finish()
+
+                else { //Now we know the user got some questions wrong so this button text says "Restart with incorrect only"
+                    //TODO Allow the user to restart the quiz with incorrect questions only
+                }
             }
             else
                 clickedOption(1, bt_option_two)
         }
+
+        //Third Button
         bt_option_three.setOnClickListener{
             if(endOfQuizFlag){
                 finish()
@@ -56,24 +65,28 @@ class Quiz : AppCompatActivity() {
             else
                 clickedOption(2, bt_option_three)
         }
+        //Fourth Button
         bt_option_four.setOnClickListener{
             clickedOption(3, bt_option_four)
         }
+
+        //Continue Button
         bt_continue.setOnClickListener{
             nextQuestion()
         }
     }
 
-    fun startQuiz(quizName:String){
-
+    private fun startQuiz(quizName:String){
         if (quizName == "General Knowledge 1"){
             questionList = returnGK1(this)
             questionList = ArrayList(questionList).apply { shuffle() }
+            tv_quiz_progress.text = "0/${questionList.size}"
+            progress_bar.max = questionList.size
             displayOptions()
         }
     }
 
-    fun displayOptions(){
+    private fun displayOptions(){
         val question = questionList[index]
         val questionText = question.questionText
 
@@ -100,12 +113,14 @@ class Quiz : AppCompatActivity() {
 
     //Handles the behaviour for when the user clicks an answer option.
     //Determines whether they've picked the correct answer or not.
-    fun clickedOption(choice: Int, bt_option: Button){
+    private fun clickedOption(choice: Int, bt_option: Button){
 
+        //This check is here for when the answers are showing red or green. Only lets you click once per question.
         if(questionOverFlag)
             return
 
         questionOverFlag = true
+
 
         //Set all option buttons invisible, just so I can set the relevant options visible again
         bt_option_one.visibility = View.INVISIBLE
@@ -146,7 +161,7 @@ class Quiz : AppCompatActivity() {
         bt_continue.visibility = View.VISIBLE
     }
 
-    fun resetOptionButtons(){
+    private fun resetOptionButtons(){
         bt_option_one.setBackgroundColor(Color.parseColor("#6200EE"))
         bt_option_two.setBackgroundColor(Color.parseColor("#6200EE"))
         bt_option_three.setBackgroundColor(Color.parseColor("#6200EE"))
@@ -160,29 +175,50 @@ class Quiz : AppCompatActivity() {
         questionOverFlag = false
     }
 
-    fun nextQuestion(){
+    private fun nextQuestion(){
         resetOptionButtons()
 
-        if(index == questionList.size-1) {
+        index += 1
+        progress_bar.progress = index
+        tv_quiz_progress.text = "$index/${questionList.size}"
+
+        if(index == questionList.size) {
             endQuiz()
             return
         }
-
-        index += 1
 
         displayOptions()
     }
 
     //Function to be called when the user has completed all questions.
-    fun endQuiz(){
+    private fun endQuiz(){
         endOfQuizFlag = true
         val amountOfQuestions = questionList.size
         val correctCount = amountOfQuestions - incorrectQuestionList.size
-        tv_question.text = "You've reached the end of the quiz and scored "+correctCount+"/"+amountOfQuestions
-        bt_option_one.text = "Restart Quiz"
-        bt_option_two.text = "Redo Quiz With Incorrect Answers Only"
-        bt_option_three.text = "Exit Quiz"
+        tv_question.text = "You've reached the end of the quiz and scored $correctCount/$amountOfQuestions"
+
+        // Check if the user got 100% correct and display buttons appropriately
+        if (correctCount == amountOfQuestions) {
+            hundredPercentFlag = true
+            bt_option_one.text = "Restart Quiz"
+            bt_option_two.text = "Exit Quiz"
+            bt_option_three.visibility = View.INVISIBLE
+        } else {
+            bt_option_one.text = "Restart Quiz"
+            bt_option_two.text = "Redo Quiz With Incorrect Answers Only"
+            bt_option_three.text = "Exit Quiz"
+            bt_option_three.visibility = View.VISIBLE
+        }
+
         bt_option_four.visibility = View.INVISIBLE
+
+    }
+
+    private fun nextQuizPrep(){
+        resetOptionButtons()
+        index = 0
+        incorrectQuestionList = arrayListOf<Question>()
+        progress_bar.progress = 0
     }
 
 }
