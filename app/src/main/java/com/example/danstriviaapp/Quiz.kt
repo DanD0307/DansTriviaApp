@@ -50,7 +50,7 @@ class Quiz : AppCompatActivity() {
                     finish()
 
                 else { //Now we know the user got some questions wrong so this button text says "Restart with incorrect only"
-                    //TODO Allow the user to restart the quiz with incorrect questions only
+                    startQuizWrongAnswers()
                 }
             }
             else
@@ -76,6 +76,7 @@ class Quiz : AppCompatActivity() {
         }
     }
 
+
     private fun startQuiz(quizName:String){
         if (quizName == "General Knowledge 1"){
             questionList = returnGK1(this)
@@ -84,6 +85,20 @@ class Quiz : AppCompatActivity() {
             progress_bar.max = questionList.size
             displayOptions()
         }
+    }
+
+    private fun startQuizWrongAnswers(){
+        //Reset stuff
+        resetOptionButtons()
+        index = 0
+        progress_bar.progress = 0
+
+        questionList = incorrectQuestionList
+        incorrectQuestionList = arrayListOf<Question>()
+        questionList = ArrayList(questionList).apply { shuffle() }
+        tv_quiz_progress.text = "0/${questionList.size}"
+        progress_bar.max = questionList.size
+        displayOptions()
     }
 
     private fun displayOptions(){
