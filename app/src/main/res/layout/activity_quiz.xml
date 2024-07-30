@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/colorLightGray"
+    android:background="?attr/colorOnBackground"
     tools:context=".MainActivity">
 
 
@@ -23,7 +23,7 @@
             android:layout_margin="10dp"
             android:gravity="center"
             android:paddingBottom="120dp"
-            android:textColor="#363A43"
+            android:textColor="?attr/colorSecondary"
             android:textSize="26sp"
             android:text="What is the capital of Saint Vincent and The Grenadines"></TextView>
 

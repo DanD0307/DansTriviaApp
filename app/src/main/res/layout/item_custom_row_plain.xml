@@ -13,6 +13,7 @@
         android:layout_margin="10dp"
         android:padding="10dp"
         app:cardCornerRadius="5dp"
+        app:cardBackgroundColor="?attr/colorOnSurface"
         app:cardElevation="3dp">
 
         <LinearLayout
@@ -28,7 +29,7 @@
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:text="General Knowledge Quiz 1" />
@@ -46,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:textAlignment="textStart"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     tools:text="Progress" />
@@ -57,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:textAlignment="textEnd"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     tools:text="HighScore" />
