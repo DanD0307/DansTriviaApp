@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_quiz.*
+import android.content.res.TypedArray
+import android.util.TypedValue
 
 class Quiz : AppCompatActivity() {
     var index = 0
@@ -19,17 +21,31 @@ class Quiz : AppCompatActivity() {
     var incorrectQuestionList = arrayListOf<Question>()
 
     var quizName = ""
+    var primaryColour = 0
+    val green = "#00FF00"
+    val red = "#FF0000"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
+
+        //This gets the quizName (what quiz we're currently in, from the code)
         quizName = intent.getStringExtra("quizName").toString()
         println("Quiz QuizName: "+quizName)
 
         startQuiz(quizName)
 
-        //Button Listeners
+
+        //COLOUR OBTAINING
+        // Retrieve the primary color from the theme
+        val typedValue = TypedValue()
+        theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+        primaryColour = typedValue.data
+        //
+
+
+        //------Button Listeners-------
 
         //First Button
         bt_option_one.setOnClickListener{
@@ -59,7 +75,7 @@ class Quiz : AppCompatActivity() {
 
         //Third Button
         bt_option_three.setOnClickListener{
-            if(endOfQuizFlag){
+            if(endOfQuizFlag){ //If this button is visible at the end of the quiz it will display 'exit'. So we close the view
                 finish()
             }
             else
@@ -148,26 +164,26 @@ class Quiz : AppCompatActivity() {
         //If chosen option is correct, turn it green
         //If incorrect turn it red, and the correct option green so the user can know the right answer.
         if(choice == correctOption){
-            bt_option.setBackgroundColor(Color.parseColor("#00FF00"))
+            bt_option.setBackgroundColor(Color.parseColor(green))
         }
         else{
-            bt_option.setBackgroundColor(Color.parseColor("#FF0000")) //Set chosen option to red background
+            bt_option.setBackgroundColor(Color.parseColor(red)) //Set chosen option to red background
             incorrectQuestionList.add(questionList[index]) //Add the question to the list of incorrectly answered questions
 
             if(correctOption == 0) {
-                bt_option_one.setBackgroundColor(Color.parseColor("#00FF00"))
+                bt_option_one.setBackgroundColor(Color.parseColor(green))
                 bt_option_one.visibility = View.VISIBLE
             }
             else if(correctOption == 1) {
-                bt_option_two.setBackgroundColor(Color.parseColor("#00FF00"))
+                bt_option_two.setBackgroundColor(Color.parseColor(green))
                 bt_option_two.visibility = View.VISIBLE
             }
             else if(correctOption == 2) {
-                bt_option_three.setBackgroundColor(Color.parseColor("#00FF00"))
+                bt_option_three.setBackgroundColor(Color.parseColor(green))
                 bt_option_three.visibility = View.VISIBLE
             }
             else if(correctOption == 3) {
-                bt_option_four.setBackgroundColor(Color.parseColor("#00FF00"))
+                bt_option_four.setBackgroundColor(Color.parseColor(green))
                 bt_option_four.visibility = View.VISIBLE
             }
         }
@@ -177,10 +193,11 @@ class Quiz : AppCompatActivity() {
     }
 
     private fun resetOptionButtons(){
-        bt_option_one.setBackgroundColor(Color.parseColor("#6200EE"))
-        bt_option_two.setBackgroundColor(Color.parseColor("#6200EE"))
-        bt_option_three.setBackgroundColor(Color.parseColor("#6200EE"))
-        bt_option_four.setBackgroundColor(Color.parseColor("#6200EE"))
+        //println("primaryCOLOUR VARIABLE = "+primaryColour);
+        bt_option_one.setBackgroundColor(primaryColour)
+        bt_option_two.setBackgroundColor(primaryColour)
+        bt_option_three.setBackgroundColor(primaryColour)
+        bt_option_four.setBackgroundColor(primaryColour)
         bt_option_one.visibility = View.VISIBLE
         bt_option_two.visibility = View.VISIBLE
         bt_option_three.visibility = View.VISIBLE
