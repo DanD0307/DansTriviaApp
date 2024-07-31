@@ -1,4 +1,4 @@
-package Constants
+package constants
 
 data class Question(
     var questionText: String,

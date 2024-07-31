@@ -1,9 +1,9 @@
-package Constants
+package constants
 
 import android.content.Context
 import android.content.res.AssetManager
 import java.io.InputStream
-import Constants.Question as Question
+import constants.Question as Question
 
 object GeneralKnowledgeConstants {
     fun returnGK1(context: Context):ArrayList<Question> {

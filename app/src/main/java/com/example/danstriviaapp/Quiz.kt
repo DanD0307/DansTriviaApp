@@ -1,15 +1,18 @@
 package com.example.danstriviaapp
 
-import Constants.GeneralKnowledgeConstants.returnGK1
-import Constants.Question
+import constants.GeneralKnowledgeConstants.returnGK1
+import constants.Question
+import constants.QuizProgress
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_quiz.*
-import android.content.res.TypedArray
 import android.util.TypedValue
+import android.content.Context
+import android.content.SharedPreferences
+import com.google.gson.Gson
 
 class Quiz : AppCompatActivity() {
     var index = 0
@@ -22,8 +25,8 @@ class Quiz : AppCompatActivity() {
 
     var quizName = ""
     var primaryColour = 0
-    val green = "#00FF00"
-    val red = "#FF0000"
+    val GREEN_COLOUR = "#00FF00"
+    val RED_COLOUR = "#FF0000"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,62 +35,58 @@ class Quiz : AppCompatActivity() {
 
         //This gets the quizName (what quiz we're currently in, from the code)
         quizName = intent.getStringExtra("quizName").toString()
-        println("Quiz QuizName: "+quizName)
+        println("Quiz QuizName: " + quizName)
 
         startQuiz(quizName)
 
 
-        //COLOUR OBTAINING
-        // Retrieve the primary color from the theme
+        //Retrieve the primary color from the theme file. Necessary for dark mode differences
         val typedValue = TypedValue()
         theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
         primaryColour = typedValue.data
-        //
+
+        initialiseButtonListeners()
+    }
 
 
-        //------Button Listeners-------
-
+    private fun initialiseButtonListeners() {
         //First Button
-        bt_option_one.setOnClickListener{
-            if(endOfQuizFlag){
+        bt_option_one.setOnClickListener {
+            if (endOfQuizFlag) {
                 //User has requested to restart the quiz in full.
-                nextQuizPrep()
+                resetQuiz()
                 startQuiz(quizName)
 
-            }
-            else //User has selected answer option one
-                clickedOption(0,bt_option_one)
+            } else //User has selected answer option one
+                clickedOption(0, bt_option_one)
         }
 
         //Second Button
-        bt_option_two.setOnClickListener{
-            if(endOfQuizFlag) {
-                if(hundredPercentFlag) //If the user got 100 percent this button just says Exit so we exit the program
+        bt_option_two.setOnClickListener {
+            if (endOfQuizFlag) {
+                if (hundredPercentFlag) //If the user got 100 percent this button just says Exit so we exit the program
                     finish()
-
                 else { //Now we know the user got some questions wrong so this button text says "Restart with incorrect only"
                     startQuizWrongAnswers()
                 }
-            }
-            else
+            } else
                 clickedOption(1, bt_option_two)
         }
 
         //Third Button
-        bt_option_three.setOnClickListener{
-            if(endOfQuizFlag){ //If this button is visible at the end of the quiz it will display 'exit'. So we close the view
+        bt_option_three.setOnClickListener {
+            if (endOfQuizFlag) { //If this button is visible at the end of the quiz it will display 'exit'. So we close the view
                 finish()
-            }
-            else
+            } else
                 clickedOption(2, bt_option_three)
         }
         //Fourth Button
-        bt_option_four.setOnClickListener{
+        bt_option_four.setOnClickListener {
             clickedOption(3, bt_option_four)
         }
 
         //Continue Button
-        bt_continue.setOnClickListener{
+        bt_continue.setOnClickListener {
             nextQuestion()
         }
     }
@@ -104,13 +103,9 @@ class Quiz : AppCompatActivity() {
     }
 
     private fun startQuizWrongAnswers(){
-        //Reset stuff
-        resetOptionButtons()
-        index = 0
-        progress_bar.progress = 0
-
         questionList = incorrectQuestionList
-        incorrectQuestionList = arrayListOf<Question>()
+        resetQuiz()
+
         questionList = ArrayList(questionList).apply { shuffle() }
         tv_quiz_progress.text = "0/${questionList.size}"
         progress_bar.max = questionList.size
@@ -144,6 +139,8 @@ class Quiz : AppCompatActivity() {
 
     //Handles the behaviour for when the user clicks an answer option.
     //Determines whether they've picked the correct answer or not.
+    //'choice' is an integer value of 0,1,2,3
+    //'bt_option' is a reference to the button the user clicked.
     private fun clickedOption(choice: Int, bt_option: Button){
 
         //This check is here for when the answers are showing red or green. Only lets you click once per question.
@@ -151,7 +148,6 @@ class Quiz : AppCompatActivity() {
             return
 
         questionOverFlag = true
-
 
         //Set all option buttons invisible, just so I can set the relevant options visible again
         bt_option_one.visibility = View.INVISIBLE
@@ -164,26 +160,26 @@ class Quiz : AppCompatActivity() {
         //If chosen option is correct, turn it green
         //If incorrect turn it red, and the correct option green so the user can know the right answer.
         if(choice == correctOption){
-            bt_option.setBackgroundColor(Color.parseColor(green))
+            bt_option.setBackgroundColor(Color.parseColor(GREEN_COLOUR))
         }
         else{
-            bt_option.setBackgroundColor(Color.parseColor(red)) //Set chosen option to red background
+            bt_option.setBackgroundColor(Color.parseColor(RED_COLOUR)) //Set chosen option to red background
             incorrectQuestionList.add(questionList[index]) //Add the question to the list of incorrectly answered questions
 
             if(correctOption == 0) {
-                bt_option_one.setBackgroundColor(Color.parseColor(green))
+                bt_option_one.setBackgroundColor(Color.parseColor(GREEN_COLOUR))
                 bt_option_one.visibility = View.VISIBLE
             }
             else if(correctOption == 1) {
-                bt_option_two.setBackgroundColor(Color.parseColor(green))
+                bt_option_two.setBackgroundColor(Color.parseColor(GREEN_COLOUR))
                 bt_option_two.visibility = View.VISIBLE
             }
             else if(correctOption == 2) {
-                bt_option_three.setBackgroundColor(Color.parseColor(green))
+                bt_option_three.setBackgroundColor(Color.parseColor(GREEN_COLOUR))
                 bt_option_three.visibility = View.VISIBLE
             }
             else if(correctOption == 3) {
-                bt_option_four.setBackgroundColor(Color.parseColor(green))
+                bt_option_four.setBackgroundColor(Color.parseColor(GREEN_COLOUR))
                 bt_option_four.visibility = View.VISIBLE
             }
         }
@@ -203,7 +199,6 @@ class Quiz : AppCompatActivity() {
         bt_option_three.visibility = View.VISIBLE
         bt_option_four.visibility = View.VISIBLE
         bt_continue.visibility = View.INVISIBLE
-        endOfQuizFlag = false
         questionOverFlag = false
     }
 
@@ -239,18 +234,43 @@ class Quiz : AppCompatActivity() {
             bt_option_one.text = "Restart Quiz"
             bt_option_two.text = "Redo Quiz With Incorrect Answers Only"
             bt_option_three.text = "Exit Quiz"
-            bt_option_three.visibility = View.VISIBLE
+            //bt_option_three.visibility = View.VISIBLE
         }
 
         bt_option_four.visibility = View.INVISIBLE
 
     }
 
-    private fun nextQuizPrep(){
+    private fun resetQuiz(){
         resetOptionButtons()
+        endOfQuizFlag = false
         index = 0
         incorrectQuestionList = arrayListOf<Question>()
         progress_bar.progress = 0
     }
 
+    //Gson is a library that is used to convert objects into into JSON
+    private fun saveQuizProgress(context: Context) {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        // Create a QuizProgress object
+        val quizProgress = QuizProgress(
+            quizName = quizName,
+            questionList = questionList,
+            incorrectQuestionList = incorrectQuestionList,
+            index = index,
+            questionOverFlag = questionOverFlag,
+            endOfQuizFlag = endOfQuizFlag,
+            hundredPercentFlag = hundredPercentFlag
+        )
+
+        // Convert the QuizProgress object to JSON
+        val gson = Gson()
+        val quizProgressJson = gson.toJson(quizProgress)
+
+        // Save JSON string to SharedPreferences with a key based on the quiz name
+        editor.putString(quizName, quizProgressJson)
+        editor.apply()
+    }
 }
