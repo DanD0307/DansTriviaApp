@@ -13,6 +13,7 @@ import android.util.TypedValue
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Quiz : AppCompatActivity() {
     var index = 0
@@ -20,6 +21,7 @@ class Quiz : AppCompatActivity() {
     var questionOverFlag = false
     var endOfQuizFlag = false
     var hundredPercentFlag = false
+    var inSubQuiz = false
     var questionList = arrayListOf<Question>()
     var incorrectQuestionList = arrayListOf<Question>()
 
@@ -37,15 +39,26 @@ class Quiz : AppCompatActivity() {
         quizName = intent.getStringExtra("quizName").toString()
         println("Quiz QuizName: " + quizName)
 
-        startQuiz(quizName)
-
-
         //Retrieve the primary color from the theme file. Necessary for dark mode differences
         val typedValue = TypedValue()
         theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
         primaryColour = typedValue.data
 
-        initialiseButtonListeners()
+        //TODO THIS IS TEMPORARY IT IS USELESS FOR NOW
+        //If there is no previous progress we just start the quiz
+        if(!quizProgressExists(this,quizName)) {
+            initialiseButtonListeners()
+            startQuiz(quizName)
+        }
+        else{
+            initialiseButtonListeners()
+            //startQuiz(quizName)
+            loadQuizProgress(this,quizName)
+            displayOptions()
+        }
+
+        //if there is previous progress we need to restore the quiz to the last saved point.
+        //
     }
 
 
@@ -64,8 +77,10 @@ class Quiz : AppCompatActivity() {
         //Second Button
         bt_option_two.setOnClickListener {
             if (endOfQuizFlag) {
-                if (hundredPercentFlag) //If the user got 100 percent this button just says Exit so we exit the program
+                if (hundredPercentFlag) {//If the user got 100 percent this button just says Exit so we exit the program
+                    println("Hundred Percent Flag is true, exiting quiz")
                     finish()
+                }
                 else { //Now we know the user got some questions wrong so this button text says "Restart with incorrect only"
                     startQuizWrongAnswers()
                 }
@@ -104,7 +119,9 @@ class Quiz : AppCompatActivity() {
 
     private fun startQuizWrongAnswers(){
         questionList = incorrectQuestionList
+
         resetQuiz()
+        inSubQuiz = true
 
         questionList = ArrayList(questionList).apply { shuffle() }
         tv_quiz_progress.text = "0/${questionList.size}"
@@ -113,6 +130,8 @@ class Quiz : AppCompatActivity() {
     }
 
     private fun displayOptions(){
+        println("QUESTIONLISTFORDEBUGGIN:"+questionList)
+        println("INDEX FOR DEBUGGING:"+index)
         val question = questionList[index]
         val questionText = question.questionText
 
@@ -231,6 +250,7 @@ class Quiz : AppCompatActivity() {
             bt_option_two.text = "Exit Quiz"
             bt_option_three.visibility = View.INVISIBLE
         } else {
+            hundredPercentFlag = false
             bt_option_one.text = "Restart Quiz"
             bt_option_two.text = "Redo Quiz With Incorrect Answers Only"
             bt_option_three.text = "Exit Quiz"
@@ -247,6 +267,23 @@ class Quiz : AppCompatActivity() {
         index = 0
         incorrectQuestionList = arrayListOf<Question>()
         progress_bar.progress = 0
+        inSubQuiz = false
+    }
+
+    //This function is called anytime the activity is paused. Also called before activity is closed
+    override fun onPause() {
+        super.onPause()
+
+        //TODO WE DON't wanna save if we've reached the end of the quiz, as theres no point and we don't wanna save in a subquiz as wellk
+        if(index != questionList.size && inSubQuiz == false)
+            saveQuizProgress(this)
+        else{
+            val sharedPreferences: SharedPreferences = this.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.remove(quizName)
+            editor.apply()
+            println("PROGRESS DELETED")
+        }
     }
 
     //Gson is a library that is used to convert objects into into JSON
@@ -255,6 +292,7 @@ class Quiz : AppCompatActivity() {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
         // Create a QuizProgress object
+        //TODO Data class of QuizProgress stores more information than I actually use. Maybe I will use it at a future point but at the moment it's redundant variables
         val quizProgress = QuizProgress(
             quizName = quizName,
             questionList = questionList,
@@ -272,5 +310,52 @@ class Quiz : AppCompatActivity() {
         // Save JSON string to SharedPreferences with a key based on the quiz name
         editor.putString(quizName, quizProgressJson)
         editor.apply()
+        println("PROGRESS SAVED")
     }
+
+    //TODO In reality I don't need a seperate function to check quizProgressExists
+    //TODO What I really need is to complete the loadQuizProgress with an optional return and double the functionality up
+    private fun loadQuizProgress(context: Context, quizName: String): Boolean{
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
+        // Retrieve the JSON string for the given quizName, or null if not found
+        val quizProgressJson = sharedPreferences.getString(quizName, null)
+
+        if(quizProgressJson == null){
+            return false
+        }
+
+        //If not false we know there is some data stored for this quiz so let's extract it
+        val gson = Gson()
+        val quizProgressType = object : TypeToken<QuizProgress>() {}.type
+        val quizProgress:QuizProgress = gson.fromJson(quizProgressJson, quizProgressType)
+        println("QUIZPROGRESS INDEX is"+quizProgress.index)
+        println("QUIZPROGRESS INCORRECT QUESTION LIST is"+quizProgress.incorrectQuestionList)
+
+
+        questionList = quizProgress.questionList
+        incorrectQuestionList = quizProgress.incorrectQuestionList
+        index = quizProgress.index
+        //questionOverFlag = quizProgress.questionOverFlag
+        questionOverFlag = false
+        endOfQuizFlag = quizProgress.endOfQuizFlag
+        hundredPercentFlag = quizProgress.hundredPercentFlag
+
+        tv_quiz_progress.text = "${index}/${questionList.size}"
+        progress_bar.max = questionList.size
+        progress_bar.progress = index
+
+        return true
+    }
+
+    //This function will return true if there is some progress saved for the quiz, false if not
+    private fun quizProgressExists(context: Context, quizName: String): Boolean {
+        // Access the SharedPreferences file named "QuizProgress" with private mode
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
+        // Retrieve the JSON string for the given quizName, or null if not found
+        val quizProgressJson = sharedPreferences.getString(quizName, null)
+
+        // If JSON string is found, convert it back to QuizProgress object
+        return quizProgressJson != null
+    }
+
 }
