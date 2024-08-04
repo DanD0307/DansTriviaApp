@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_custom_row.view.*
 import kotlinx.android.synthetic.main.item_custom_row.view.card_view_item
 import kotlinx.android.synthetic.main.item_custom_row_plain.view.*
 
-class ItemAdapterPlain(val context: Context, val items: ArrayList<String>) :
+class ItemAdapterPlain(val context: Context, var items: ArrayList<ArrayList<String>>) :
     RecyclerView.Adapter<ItemAdapterPlain.ViewHolder>() {
 
     private lateinit var mListener : onItemClickListener
@@ -54,12 +54,25 @@ class ItemAdapterPlain(val context: Context, val items: ArrayList<String>) :
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val item = items.get(position)
-        println("TEST")
+        val titles = items[0]
+        val progressList = items[1]
+        val highScores = items[2]
 
-        holder.tvTitle.text = item
-        holder.tvProgress.text = "Progress : 1/15"
-        holder.tvHighScore.text = "High Score : 5/15"
+        //println("TITLES: "+titles)
+        val title = titles.get(position)
+        var progress = progressList.get(position)
+        if(progress == "null")
+            progress = ""
+
+        val highScore = highScores.get(position)
+
+        holder.tvTitle.text = title
+        holder.tvProgress.text = progress
+
+        if(highScore != "null")
+            holder.tvHighScore.text = "High-Score : "+highScore //highScore variable is in format 5/10
+        else
+            holder.tvHighScore.text = ""
 
     }
 
@@ -67,7 +80,7 @@ class ItemAdapterPlain(val context: Context, val items: ArrayList<String>) :
      * Gets the number of items in the list
      */
     override fun getItemCount(): Int {
-        return items.size
+        return items[0].size
     }
 
 
@@ -98,4 +111,10 @@ class ItemAdapterPlain(val context: Context, val items: ArrayList<String>) :
     override fun getItemViewType(position: Int): Int {
         return position
     }
+
+    fun updateData(newItems: ArrayList<ArrayList<String>>) {
+        this.items = newItems
+        notifyDataSetChanged()
+    }
+
 }

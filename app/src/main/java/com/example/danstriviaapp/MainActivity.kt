@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getItemsList(): ArrayList<String>{
-        val list = arrayListOf("General Knowledge","Capital\nCities","Periodic Table","US State Capitals","Geography","History","Film and Television","Sport","Science","Food and Drink")
+        val list = arrayListOf("General Knowledge","Capital Cities","Periodic Table","US State Capitals","Geography","History","Film and Television","Sport","Science","Food and Drink")
         return list
     }
     private fun getImageList(): ArrayList<Int>{

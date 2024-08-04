@@ -14,6 +14,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import constants.GeneralKnowledgeConstants.returnGK2
+import constants.GeneralKnowledgeConstants.returnQuiz
 
 class Quiz : AppCompatActivity() {
     var index = 0
@@ -48,6 +50,7 @@ class Quiz : AppCompatActivity() {
         //If there is no previous progress we just start the quiz
         if(!quizProgressExists(this,quizName)) {
             initialiseButtonListeners()
+            println("STARTING QUIZ AFRESH NOW!!!!!!!")
             startQuiz(quizName)
         }
         else{
@@ -109,12 +112,17 @@ class Quiz : AppCompatActivity() {
 
     private fun startQuiz(quizName:String){
         if (quizName == "General Knowledge 1"){
-            questionList = returnGK1(this)
-            questionList = ArrayList(questionList).apply { shuffle() }
-            tv_quiz_progress.text = "0/${questionList.size}"
-            progress_bar.max = questionList.size
-            displayOptions()
+            questionList = returnQuiz(this,"gk/gk1.txt")
+
         }
+        if (quizName == "General Knowledge 2"){
+            questionList = returnQuiz(this,"gk/gk2.txt")
+        }
+
+        questionList = ArrayList(questionList).apply { shuffle() }
+        tv_quiz_progress.text = "0/${questionList.size}"
+        progress_bar.max = questionList.size
+        displayOptions()
     }
 
     private fun startQuizWrongAnswers(){
@@ -129,6 +137,7 @@ class Quiz : AppCompatActivity() {
         displayOptions()
     }
 
+    //TODO CHANGING THIS. INSTEAD OF HAVING AN
     private fun displayOptions(){
         println("QUESTIONLISTFORDEBUGGIN:"+questionList)
         println("INDEX FOR DEBUGGING:"+index)
@@ -138,8 +147,7 @@ class Quiz : AppCompatActivity() {
         //Here I randomise the options by obtaining what the correct answer is in plaintext.
         //Then I randomise the options and obtain the new index of the correct answer.
         var options = question.options
-        correctOption = question.correctAnswer
-        val correctAnswer = options[correctOption]
+        val correctAnswer = options[0]
         options = ArrayList(question.options).apply { shuffle() }
         correctOption = options.indexOf(correctAnswer)
 
@@ -242,6 +250,7 @@ class Quiz : AppCompatActivity() {
         val amountOfQuestions = questionList.size
         val correctCount = amountOfQuestions - incorrectQuestionList.size
         tv_question.text = "You've reached the end of the quiz and scored $correctCount/$amountOfQuestions"
+        saveHighScore(this,correctCount)
 
         // Check if the user got 100% correct and display buttons appropriately
         if (correctCount == amountOfQuestions) {
@@ -274,8 +283,7 @@ class Quiz : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
 
-        //TODO WE DON't wanna save if we've reached the end of the quiz, as theres no point and we don't wanna save in a subquiz as wellk
-        if(index != questionList.size && inSubQuiz == false)
+        if(index != questionList.size && inSubQuiz == false && index != 0)
             saveQuizProgress(this)
         else{
             val sharedPreferences: SharedPreferences = this.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
@@ -283,6 +291,23 @@ class Quiz : AppCompatActivity() {
             editor.remove(quizName)
             editor.apply()
             println("PROGRESS DELETED")
+        }
+    }
+
+
+    //To simplyfy the displaying of the highScore in the menu, I want to save the high-score as '10/20'.
+    //However, when I do this, it means I need to extract the high-score value of 10 by splitting the string
+    //So I split the string, convert it to an int, compare it against current score, then put it back together and save it
+    private fun saveHighScore(context:Context, score:Int){
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        val saveKey = quizName + "HS"
+
+        val highScoreFull = sharedPreferences.getString(saveKey, "-1")
+        val highScore = highScoreFull!!.split("/")[0]
+        if(score > highScore!!.toInt()) {
+            editor.putString(saveKey, score.toString()+"/"+questionList.size)
+            editor.apply()
         }
     }
 
@@ -300,7 +325,8 @@ class Quiz : AppCompatActivity() {
             index = index,
             questionOverFlag = questionOverFlag,
             endOfQuizFlag = endOfQuizFlag,
-            hundredPercentFlag = hundredPercentFlag
+            hundredPercentFlag = hundredPercentFlag,
+            progress = "Progress : " + index + "/" + questionList.size
         )
 
         // Convert the QuizProgress object to JSON
@@ -328,8 +354,8 @@ class Quiz : AppCompatActivity() {
         val gson = Gson()
         val quizProgressType = object : TypeToken<QuizProgress>() {}.type
         val quizProgress:QuizProgress = gson.fromJson(quizProgressJson, quizProgressType)
-        println("QUIZPROGRESS INDEX is"+quizProgress.index)
-        println("QUIZPROGRESS INCORRECT QUESTION LIST is"+quizProgress.incorrectQuestionList)
+        //println("QUIZPROGRESS INDEX is"+quizProgress.index)
+       // println("QUIZPROGRESS INCORRECT QUESTION LIST is"+quizProgress.incorrectQuestionList)
 
 
         questionList = quizProgress.questionList

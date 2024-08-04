@@ -7,5 +7,6 @@ data class QuizProgress(
     val index: Int,
     val questionOverFlag: Boolean,
     val endOfQuizFlag: Boolean,
-    val hundredPercentFlag: Boolean
+    val hundredPercentFlag: Boolean,
+    val progress : String
 )
