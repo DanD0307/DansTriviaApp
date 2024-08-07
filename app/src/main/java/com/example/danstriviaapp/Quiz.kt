@@ -118,6 +118,12 @@ class Quiz : AppCompatActivity() {
         if (quizName == "General Knowledge 2"){
             questionList = returnQuiz(this,"gk/gk2.txt")
         }
+        if (quizName == "Europe Name The Capital"){
+            questionList = returnQuiz(this,"capitalcities/europeNameTheCapital.txt")
+        }
+        if (quizName == "Europe Name The Country"){
+            questionList = returnQuiz(this,"capitalcities/europeNameTheCapital.txt")
+        }
 
         questionList = ArrayList(questionList).apply { shuffle() }
         tv_quiz_progress.text = "0/${questionList.size}"

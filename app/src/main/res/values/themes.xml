@@ -20,4 +20,11 @@
         <item name="colorOnSurface">@color/white</item>
         <!-- Primary App Text color. -->
     </style>
+    <style name="Theme.DansTriviaApp.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.DansTriviaApp.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.DansTriviaApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

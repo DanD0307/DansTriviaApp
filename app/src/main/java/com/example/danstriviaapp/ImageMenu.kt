@@ -1,16 +1,21 @@
 package com.example.danstriviaapp
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import android.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recyclerviewtesting.Adapters.ItemAdapter
-//import com.example.recyclerviewtesting.Adapters.ItemAdapter
+import com.example.recyclerviewtesting.Adapters.ItemAdapterPlain
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import constants.QuizProgress
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_menu.*
 
-class MainActivity : AppCompatActivity() {
+class ImageMenu : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         recycler_view_items.adapter = itemAdapter
 
         //actionBar!!.setTitle("heading")
-        supportActionBar!!.setTitle("Main Menu");
+        supportActionBar!!.setTitle("Capital Cities");
 
         //Code that handles when any of the categories are picked
         itemAdapter.setOnItemClickListener(object:ItemAdapter.onItemClickListener{
@@ -36,16 +41,9 @@ class MainActivity : AppCompatActivity() {
                 val topicList = getItemsList()
                 val topicName = topicList.get(position)
 
-                if(topicName != "Capital Cities") {
-                    val intent = Intent(this@MainActivity, Menu::class.java)
-                    intent.putExtra("topicName", topicName)
-                    startActivity(intent)
-                }
-                else{
-                    val intent = Intent(this@MainActivity, ImageMenu::class.java)
-                    intent.putExtra("topicName", topicName)
-                    startActivity(intent)
-                }
+                val intent = Intent(this@ImageMenu, Menu::class.java)
+                intent.putExtra("topicName",topicName)
+                startActivity(intent)
             }
 
         })
@@ -53,19 +51,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getItemsList(): ArrayList<String>{
-        val list = arrayListOf("General Knowledge","Capital Cities","Periodic Table","US State Capitals","Geography","History","Film and Television","Sport","Science","Food and Drink")
+        val list = arrayListOf("Europe","Asia","Africa","Oceania","North America","South America")
         return list
     }
     private fun getImageList(): ArrayList<Int>{
-        val images = arrayListOf<Int>(R.drawable.light,R.drawable.eiffeltower,R.drawable.periodictable,R.drawable.usa,R.drawable.earth,R.drawable.kinghenryviii,R.drawable.tv,R.drawable.sport,R.drawable.space,R.drawable.food)
+        val images = arrayListOf<Int>(R.drawable.light,R.drawable.eiffeltower,R.drawable.periodictable,R.drawable.usa,R.drawable.earth,R.drawable.kinghenryviii)
         return images
     }
-    /*
-    fun getImagesList():ArrayList<Int>{
-        val list = arrayListOf<Int>(R.drawable.light,R.drawable.eiffeltower,R.drawable.periodictable,R.drawable.usa,R.drawable.earth,R.drawable.kinghenryviii,R.drawable.tv,R.drawable.sport,R.drawable.space,R.drawable.food)
-        return list
+
+    fun clearAllSharedPreferences(context: Context) {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
     }
-
-     */
-
 }

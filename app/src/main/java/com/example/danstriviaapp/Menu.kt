@@ -16,6 +16,8 @@ class Menu : AppCompatActivity() {
 
     private lateinit var itemAdapter: ItemAdapterPlain
     private lateinit var topicArray: ArrayList<ArrayList<String>>
+    private var isSubQuiz = false
+    private var category = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,26 +44,43 @@ class Menu : AppCompatActivity() {
         itemAdapter.setOnItemClickListener(object : ItemAdapterPlain.onItemClickListener {
             override fun onItemClick(position: Int) {
                 val titles = topicArray[0]
-                val quizName = titles[position]
-                val intent = Intent(this@Menu, Quiz::class.java)
-                intent.putExtra("quizName", quizName)
-                startActivity(intent)
+                var quizName = titles[position]
+                if(isSubQuiz)
+                    quizName = category+" "+quizName
+
+                if(quizName == "Europe Type the Capital"){
+                    val intent = Intent(this@Menu, TypingQuiz::class.java)
+                    intent.putExtra("quizName", quizName)
+                    startActivity(intent)
+
+                }
+                else {
+
+                    val intent = Intent(this@Menu, Quiz::class.java)
+                    intent.putExtra("quizName", quizName)
+                    startActivity(intent)
+                }
             }
         })
     }
 
     private fun loadDataAndSetupRecyclerView() {
-        val category = intent.getStringExtra("topicName")
+        category = intent.getStringExtra("topicName").toString()
         //TODO TOPICS SHOULD BE GATHERED SOMEWHERE PROPER BASED ON THE TOPIC NAME
         val quizNames : ArrayList<String>
         topicArray = if (category == "General Knowledge") {
             supportActionBar!!.title = "General Knowledge"
             val quizNames = arrayListOf("General Knowledge 1", "General Knowledge 2")
-            getGeneralKnowledgeTopics(quizNames)
+            getQuizData(quizNames)
         }else if (category == "Capital Cities"){
 
             val quizNames = arrayListOf("Capital Cities 1", "Capital Cities 2")
-            getGeneralKnowledgeTopics(quizNames)
+            getQuizData(quizNames)
+        }
+        else if (category == "Europe"){
+            isSubQuiz = true
+            val quizNames = arrayListOf("Name The Capital", "Name The Country", "Type the Capital")
+            getQuizData(quizNames)
         }
 
         else {
@@ -73,13 +92,21 @@ class Menu : AppCompatActivity() {
         itemAdapter.updateData(topicArray)
     }
 
-    private fun getGeneralKnowledgeTopics(quizNames: ArrayList<String>): ArrayList<ArrayList<String>> {
+    //The purpose of this function is to take the quiz names, and return a combined list of quiznames, progress and highscores.
+    private fun getQuizData(quizNames: ArrayList<String>): ArrayList<ArrayList<String>> {
         val progress = arrayListOf<String>()
         val highScores = arrayListOf<String>()
 
         val sharedPreferences: SharedPreferences = this.getSharedPreferences("QuizProgress", Context.MODE_PRIVATE)
+        var quizName = ""
 
-        for (quizName in quizNames) {
+
+        for (qn in quizNames) {
+            if(isSubQuiz)
+                quizName = category + " " + qn
+            else
+                quizName = qn
+
             val quizProgressJson = sharedPreferences.getString(quizName, null)
             if (quizProgressJson != null) {
                 val gson = Gson()

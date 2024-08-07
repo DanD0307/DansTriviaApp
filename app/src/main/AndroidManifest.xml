@@ -14,14 +14,25 @@
         android:theme="@style/Theme.DansTriviaApp"
         tools:targetApi="31">
         <activity
+            android:name=".TypingQuiz"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".Quiz"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ImageMenu"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Menu"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
