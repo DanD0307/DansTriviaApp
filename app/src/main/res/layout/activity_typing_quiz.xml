@@ -1,74 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="?attr/colorOnBackground"
-    tools:context=".TypingQuiz">
+    android:padding="16dp"
+    tools:context=".MainActivity">
 
-
-    <LinearLayout
+    <!-- Progress Bar and Percentage TextView Container at the top -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/progressContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        >
-
-        <TextView
-            android:id="@+id/tv_question"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:paddingBottom="120dp"
-            android:textColor="?attr/colorSecondary"
-            android:textSize="26sp"
-            android:text="What is the capital of Saint Vincent and The Grenadines"></TextView>
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp"
+        android:padding="8dp"
+        app:cardBackgroundColor="#333333"
+        app:cardCornerRadius="8dp">
 
         <LinearLayout
-            android:id="@+id/ll_progress_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
+            <!-- Progress Bar -->
             <ProgressBar
-                android:id="@+id/progress_bar"
+                android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:layout_weight="1"
-                android:max="10"
-                android:minHeight="50dp"
-                android:progress="0"
-                android:indeterminate="false"
-                />
+                android:layout_marginEnd="8dp" />
 
+            <!-- Progress Percentage TextView -->
             <TextView
                 android:id="@+id/tv_quiz_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="15dp"
-                android:textSize="14sp"
-                android:text="0/10"
-                >
-            </TextView>
+                android:text="50%"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"/>
         </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
+    <!-- Question TextView centered vertically and horizontally -->
+    <TextView
+        android:id="@+id/tv_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="What is the capital of Antigua and Barbuda?"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="26sp" />
 
+    <!-- Answer Input and Submit Button Container at the bottom -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
 
+        <!-- Answer EditText -->
+        <EditText
+            android:id="@+id/et_answer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter your answer"
+            android:backgroundTint="#FFFFFF"
+            android:textColor="#FFFFFF"/>
 
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/bt_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#808080"
+            />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/editTextTextMultiLine"
-        android:layout_width="match_parent"
-        android:text = "Example Text"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textMultiLine" />
-
-</ScrollView>
+</RelativeLayout>
