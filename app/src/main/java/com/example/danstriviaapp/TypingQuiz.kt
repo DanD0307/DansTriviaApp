@@ -6,7 +6,6 @@ import android.view.View
 import constants.GeneralKnowledgeConstants
 import constants.Question
 import kotlinx.android.synthetic.main.activity_typing_quiz.*
-import kotlinx.android.synthetic.main.activity_typing_quiz.bt_continue
 import kotlinx.android.synthetic.main.activity_typing_quiz.tv_question
 import kotlinx.android.synthetic.main.activity_typing_quiz.tv_quiz_progress
 
@@ -58,13 +57,7 @@ class TypingQuiz : AppCompatActivity() {
             }
         }
 
-        //Continue Button MIGHT BE DISCONTINUED
-        bt_continue.setOnClickListener {
-            //Show the next question and then make the button invisible again
-            bt_continue.setVisibility(View.GONE);
-            et_answer.setVisibility(View.VISIBLE)
-            nextQuestion()
-        }
+
     }
 
     private fun startQuiz(quizName:String){
@@ -118,7 +111,8 @@ class TypingQuiz : AppCompatActivity() {
     }
 
     private fun endQuiz(){
-        tv_question.text = "QUIZ IS OVER"
+        //tv_question.text = "QUIZ IS OVER"
+        viewSwitcher.showNext() // Switch to the end screen layout
     }
 
 }

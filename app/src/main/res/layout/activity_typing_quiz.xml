@@ -6,99 +6,221 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
-    <!-- Progress Bar and Percentage TextView Container at the top -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/progressContainer"
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="16dp"
-        android:padding="8dp"
-        app:cardBackgroundColor="#333333"
-        app:cardCornerRadius="8dp">
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
 
-        <LinearLayout
+        <!-- First View: The quiz layout -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_height="match_parent">
 
-            <!-- Progress Bar -->
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp" />
+            <!-- Progress Bar and Percentage TextView Container at the top -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/progressContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="16dp"
+                android:padding="8dp"
+                app:cardBackgroundColor="#333333"
+                app:cardCornerRadius="8dp">
 
-            <!-- Progress Percentage TextView -->
-            <TextView
-                android:id="@+id/tv_quiz_progress"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Progress Percentage TextView -->
+                    <TextView
+                        android:id="@+id/tv_quiz_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50%"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Container for Question TextView -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="50%"
-                android:textSize="16sp"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:gravity="center">
 
-    <!-- Container for Question TextView and Continue Button -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:gravity="center">
+                <!-- Question TextView centered vertically and horizontally -->
+                <TextView
+                    android:id="@+id/tv_question"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="What is the capital of Antigua and Barbuda?"
+                    android:textColor="?attr/colorSecondary"
+                    android:textSize="26sp" />
 
-        <!-- Question TextView centered vertically and horizontally -->
-        <TextView
-            android:id="@+id/tv_question"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:text="What is the capital of Antigua and Barbuda?"
-            android:textColor="?attr/colorSecondary"
-            android:textSize="26sp" />
+            </LinearLayout>
 
-        <!-- Continue Button -->
-        <Button
-            android:id="@+id/bt_continue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Continue"
-            android:visibility="gone"
-            android:backgroundTint="#808080"
-        />
-    </LinearLayout>
+            <!-- Answer Input and Submit Button Container at the bottom -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentBottom="true">
 
-    <!-- Answer Input and Submit Button Container at the bottom -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+                <!-- Answer EditText -->
+                <EditText
+                    android:id="@+id/et_answer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Enter your answer"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#FFFFFF"/>
 
-        <!-- Answer EditText -->
-        <EditText
-            android:id="@+id/et_answer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Enter your answer"
-            android:backgroundTint="#FFFFFF"
-            android:textColor="#FFFFFF"/>
+                <!-- Submit Button -->
+                <Button
+                    android:id="@+id/bt_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submit"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="#808080"
+                    />
+            </LinearLayout>
 
-        <!-- Submit Button -->
-        <Button
-            android:id="@+id/bt_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Submit"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="#808080"
-            />
-    </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Second View: The end screen layout -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <!-- Progress Bar and Percentage TextView Container at the top -->
+            <androidx.cardview.widget.CardView
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="16dp"
+                android:padding="8dp"
+                app:cardBackgroundColor="#333333"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/progressBarEnd"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Progress Percentage TextView -->
+                    <TextView
+                        android:id="@+id/tv_quiz_progress_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50%"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- Centered TextView slightly above the center -->
+            <TextView
+                android:id="@+id/tv_end_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You scored 5/10"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/button_container"
+                app:layout_constraintVertical_bias="0.4"/>
+
+            <!-- Buttons container with some spacing from the bottom -->
+            <LinearLayout
+                android:id="@+id/button_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="32dp">
+
+                <!-- Restart Button -->
+                <Button
+                    android:id="@+id/bt_restart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Restart"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:layout_marginBottom="16dp"
+                    android:padding="16dp"
+                    android:background="@drawable/button_background"/>
+
+                <!-- Restart Incorrect Only Button -->
+                <Button
+                    android:id="@+id/bt_restart_incorrect"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Restart Incorrect Only"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:layout_marginBottom="16dp"
+                    android:padding="16dp"
+                    android:background="@drawable/button_background" />
+
+                <!-- Exit Button -->
+                <Button
+                    android:id="@+id/bt_exit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Exit"
+                    android:textSize="18sp"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/button_background"/>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+    </ViewSwitcher>
 
 </RelativeLayout>

@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Dan/AndroidStudioProjects/DansTriviaApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2595" />
+        <entry key="..\:/Users/Dan/AndroidStudioProjects/DansTriviaApp/app/src/main/res/drawable/button_background.xml" value="0.2595" />
+        <entry key="..\:/Users/Dan/AndroidStudioProjects/DansTriviaApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2595" />
         <entry key="..\:/Users/Dan/AndroidStudioProjects/DansTriviaApp/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Dan/AndroidStudioProjects/DansTriviaApp/app/src/main/res/layout/activity_menu.xml" value="0.11302083333333333" />
         <entry key="..\:/Users/Dan/AndroidStudioProjects/DansTriviaApp/app/src/main/res/layout/activity_quiz.xml" value="0.11302083333333333" />

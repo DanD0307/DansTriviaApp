@@ -1,10 +1,2 @@
 What is the capital of Albania?#Tirana
 What is the capital of Andorra?#Andorra La Vella#Andorra
-What is the capital of Austria?#Vienna
-What is the capital of Belarus?#Minsk
-What is the capital of Belgium?#Brussels
-What is the capital of Bosnia and Herzegovina?#Sarajevo
-What is the capital of Bulgaria?#Sofia
-What is the capital of Croatia?#Zagreb
-What is the capital of Cyprus?#Nicosia
-What is the capital of Czechia?#Prague
